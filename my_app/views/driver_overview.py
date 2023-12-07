@@ -1,4 +1,5 @@
 from kivy.uix.label import Label
+from kivymd.uix.label import MDLabel
 from kivy.uix.button import Button
 from kivy.uix.screenmanager import Screen
 from kivy.uix.boxlayout import BoxLayout
@@ -12,19 +13,19 @@ class DriverOverviewScreen(Screen):
         layout = BoxLayout(orientation='vertical',spacing=10)
 
         header_layout = BoxLayout(orientation='horizontal', size_hint_y=None, height=30)
-        header_layout.add_widget(Label(text="Driver", size_hint_x=0.4))
-        header_layout.add_widget(Label(text="Nationality", size_hint_x=0.2))
-        header_layout.add_widget(Label(text="Date of Birth", size_hint_x=0.2))
-        header_layout.add_widget(Label(text="Permanent Number", size_hint_x=0.2))
+        header_layout.add_widget(MDLabel(text="Driver", size_hint_x=0.4))
+        header_layout.add_widget(MDLabel(text="Nationality", size_hint_x=0.2))
+        header_layout.add_widget(MDLabel(text="Date of Birth", size_hint_x=0.2))
+        header_layout.add_widget(MDLabel(text="Permanent Number", size_hint_x=0.2))
         layout.add_widget(header_layout)
 
         drivers_data = self.get_current_f1_drivers()
         for driver in drivers_data:
             row_layout = BoxLayout(orientation='horizontal', size_hint_y=None, height=30)
-            row_layout.add_widget(Label(text=f"{driver['givenName']} {driver['familyName']}", size_hint_x=0.4))
-            row_layout.add_widget(Label(text=driver['nationality'], size_hint_x=0.2))
-            row_layout.add_widget(Label(text=driver['dateOfBirth'], size_hint_x=0.2))
-            row_layout.add_widget(Label(text=driver['permanentNumber'], size_hint_x=0.2))
+            row_layout.add_widget(MDLabel(text=f"{driver['givenName']} {driver['familyName']}", size_hint_x=0.4))
+            row_layout.add_widget(MDLabel(text=driver['nationality'], size_hint_x=0.2))
+            row_layout.add_widget(MDLabel(text=driver['dateOfBirth'], size_hint_x=0.2))
+            row_layout.add_widget(MDLabel(text=driver['permanentNumber'], size_hint_x=0.2))
             layout.add_widget(row_layout)
                 
         # Create a ScrollView and add the layout to it
