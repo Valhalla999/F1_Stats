@@ -3,7 +3,6 @@ from kivymd.uix.button import MDFillRoundFlatButton
 from kivy.uix.image import Image
 from kivy.uix.screenmanager import Screen
 from kivy.uix.boxlayout import BoxLayout
-from kivy.graphics import Color,Rectangle
 
 class MainScreen(Screen):
     def __init__(self, **kwargs):
@@ -43,6 +42,13 @@ class MainScreen(Screen):
             on_press=self.switch_to_champion_standings)
         
         btn3 = MDFillRoundFlatButton(
+            text="Tracks", 
+            size_hint=(1, 1), 
+            theme_text_color="Custom",
+            md_bg_color=(33/255, 89/255, 116/255, 1),
+            on_press=self.switch_to_tracks)
+        
+        btn4 = MDFillRoundFlatButton(
             text="Test Screen", 
             size_hint=(1, 1), 
             theme_text_color="Custom",
@@ -53,13 +59,9 @@ class MainScreen(Screen):
         layout.add_widget(btn1)
         layout.add_widget(btn2)
         layout.add_widget(btn3)
-
-        
-
+        layout.add_widget(btn4)
 
         self.add_widget(layout)
-
-
 
     def switch_to_driver_overview(self, instance):
         self.manager.current = 'driver_overview'
@@ -67,8 +69,12 @@ class MainScreen(Screen):
     def switch_to_champion_standings(self, instance):
         self.manager.current = 'champion_standings'
 
+    def switch_to_tracks(self, instance):
+        self.manager.current = 'tracks'
+
     def switch_to_test(self, instance):
         self.manager.current = 'kivymd_page'
+
 
     
             
