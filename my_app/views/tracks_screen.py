@@ -2,6 +2,7 @@ from kivy.uix.screenmanager import Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
+from kivymd.uix.label import MDLabel
 from kivy.uix.button import Button
 from kivymd.uix.menu import MDDropdownMenu
 from kivymd.uix.button import MDFlatButton
@@ -14,33 +15,60 @@ class TracksScreen(Screen):
     def __init__(self, **kwargs):
         super(TracksScreen, self).__init__(**kwargs)
 
+        self.selected_year = 2023
+
         # Create the layout
-        layout = BoxLayout(orientation='vertical', spacing=10, padding=10)
-        #layout = GridLayout(cols=2)
+        layout = BoxLayout(
+            orientation='vertical',
+            spacing=20,
+            padding=40,
+        )
+
+            
 
         # Labels
-        label_circuit = Label(text="Select Circuit:", color=(0, 0, 0, 1))
-        label_year = Label(text="Select Year:", color=(0, 0, 0, 1))
+        label_circuit = Label(
+            text="Select Circuit:",
+            pos_hint={"center_x": 0.5, "center_y": 0.5},
+            #size_hint=(None, None),
+            color=(0, 0, 0, 1)
+            )
+        
+        label_year = MDLabel(
+            text="Select Year:",
+            pos_hint={"center_x": 0.5},
+            size_hint=(None, None),
+            color=(0, 0, 0, 1)
+            )
+
+
 
         #Buttons
         self.circuit_button = MDFlatButton(
             text="Select Circuit",
-            size_hint=(None, None),
-            on_release=lambda instance: self.open_circuit_menu(instance),
             theme_text_color='Custom',
+            pos_hint={"center_x": 0.5, "center_y": 0.5},
+            size_hint=(None, None),
             text_color=(1, 1, 1, 1),
-            md_bg_color=(33 / 255, 89 / 255, 116 / 255, 1))
+            md_bg_color=(33 / 255, 89 / 255, 116 / 255, 1),
+            on_release=lambda instance: self.open_circuit_menu(instance)
+            )
         
         self.year_button = MDFlatButton(
             text="Select Year",
-            on_release=self.open_year_menu,
             theme_text_color='Custom',
+            pos_hint={"center_x": 0.5, "center_y": 0.5},
+            size_hint=(None, None),
             text_color=(1, 1, 1, 1),
-            md_bg_color=(33 / 255, 89 / 255, 116 / 255, 1))
+            md_bg_color=(33 / 255, 89 / 255, 116 / 255, 1),
+            on_release=self.open_year_menu
+            )
         
         api_button = MDFlatButton(
             text="Get Data",
             theme_text_color="Custom",
+            pos_hint={"center_x": 0.5, "center_y": 0.5},
+            size_hint=(None, None),
             text_color=(1, 1, 1, 1),
             md_bg_color=(33 / 255, 89 / 255, 116 / 255, 1),
             on_press=self.on_api_button_press)
@@ -57,21 +85,23 @@ class TracksScreen(Screen):
             )
 
         # Add items to dropdowns (you need to fetch the available circuits and years from the Ergast API)
-        self.populate_circuits()
         self.populate_years()
-
-        # Create button to trigger API request
-        
+        self.populate_circuits(year=self.selected_year)
 
         # Add widgets to the layout
-        layout.add_widget(label_circuit)
-        layout.add_widget(self.circuit_button)
 
         layout.add_widget(label_year)
         layout.add_widget(self.year_button)
 
+        layout.add_widget(label_circuit)
+        layout.add_widget(self.circuit_button)
+
         layout.add_widget(api_button)
         self.add_widget(layout)
+
+
+
+
 
     def open_circuit_menu(self, instance):
         self.circuit_menu.caller = instance
@@ -81,60 +111,91 @@ class TracksScreen(Screen):
         self.year_menu.caller = instance
         self.year_menu.open()
 
+    def populate_circuits(self, year):
 
-    # Modify the populate_circuits method
-    def populate_circuits(self):
-        response = requests.get('http://ergast.com/api/f1/2023/circuits.json')
+        print(f'{year}')
+        response = requests.get(f'http://ergast.com/api/f1/{year}/circuits.json')
         circuits = response.json().get('MRData', {}).get('CircuitTable', {}).get('Circuits', [])
 
         # Add items to the dropdown
-        for circuit in circuits:
-            item = {'text': circuit['circuitName'], 'viewclass': 'OneLineListItem', 'on_release': lambda circuit=circuit['circuitName']: self.select_circuit(circuit)}
-            self.circuit_menu.items.append(item)
+        self.circuit_menu.items = [
+            {
+                'text': circuit['circuitName'],
+                'viewclass': 'OneLineListItem',
+                'on_release': lambda circuit_name=circuit['circuitId']: self.select_circuit(circuit_name)
+            }
+            for circuit in circuits
+        ]
 
+    
+    
+    def populate_years(self,year=None):
+            url = 'http://ergast.com/api/f1/seasons.json'
+            more_data = True
+            offset = 0
 
-    def populate_years(self):
-        response = requests.get('http://ergast.com/api/f1/seasons.json')
-        years = response.json().get('MRData', {}).get('SeasonTable', {}).get('Seasons', [])
+            all_years = []
 
-        # Add items to the dropdown
-        for year in years:
-            item = {'text': year, 'viewclass': 'OneLineListItem', 'on_release': self.select_year}
-            self.year_menu.items.append(item)
+            while more_data:
+                params = {'limit': 100, 'offset': offset}  # Adjust the limit based on API requirements
+                response = requests.get(url, params=params)
+                data = response.json().get('MRData', {}).get('SeasonTable', {}).get('Seasons', [])
+
+                all_years.extend(data)
+
+                # Check if there are more pages
+                offset += len(data)
+                more_data = len(data) > 0
+
+            # Sort the years in descending order
+            sorted_years = sorted(all_years, key=lambda x: int(x['season']), reverse=True)
+
+            # Add items to the dropdown
+            for year in sorted_years:
+                item = {
+                    'text': year['season'],
+                    'viewclass': 'OneLineListItem',
+                    'on_release': lambda season=year['season']: self.select_year(season)
+                }
+                self.year_menu.items.append(item)
 
 
     def select_circuit(self, circuit):
         # Handle circuit selection
-        print("Selected Circuit:", circuit)
+        print(circuit)
         self.circuit_menu.dismiss()
 
-    def select_year(self,  instance_menu_item, year):
+    def select_year(self, year):
         # Handle year selection
-        print("Selected Year:", year)
+        print(year)
         self.year_menu.dismiss()
+        self.populate_circuits(year)
 
     def on_api_button_press(self, instance):
-        circuit_item = self.circuit_menu.current_item
-        year_item = self.year_menu.current_item
+        '''try:
+            circuit_item = self.circuit_menu.caller.text
+            year_item = self.year_menu.caller.text
+        except AttributeError:
+            circuit_item = None
+            year_item = None'''
 
-        if circuit_item is not None and year_item is not None:
-            circuit = circuit_item.text
-            year = year_item.text
+        if self.circuit_menu.caller is not None and self.year_menu.caller.text is not None:
+            circuit = self.circuit_menu.caller.text
+            year = self.year_menu.caller.text
+        
 
             # Make API request using the selected circuit and year
             api_url = f'http://ergast.com/api/f1/{year}/circuits/{circuit}/results.json'
             response = requests.get(api_url)
 
-            # Process the API response (this depends on the actual Ergast API response structure)
-            api_results = response.json()  # Adjust this based on the API response structure
-            print(f"API Results for {year} at {circuit}:", api_results)
+
+            print(f"API Results for {year} at {circuit}:") #api_results)
 
             # Add your logic to handle and display the results
-            self.show_results_dialog()
+            #self.show_results_dialog()
         else:
             print("Please select a circuit and a year before making the API request.")
 
     def show_results_dialog(self):
-        # Display a dialog with the API results (customize based on your API response)
         results_dialog = MDDialog(title="API Results", text="Dummy API Results")
         results_dialog.open()

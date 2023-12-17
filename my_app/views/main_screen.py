@@ -74,7 +74,3 @@ class MainScreen(Screen):
 
     def switch_to_test(self, instance):
         self.manager.current = 'kivymd_page'
-
-
-    
-            
