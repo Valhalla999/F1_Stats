@@ -51,7 +51,6 @@ class ChampionStandingsScreen(Screen):
         self.manager.current = "main"
 
     def get_driver_standings(self):
-        # Request to Ergast API
         api_url = "https://ergast.com/api/f1/current/driverStandings.json"
         response = requests.get(api_url)
 

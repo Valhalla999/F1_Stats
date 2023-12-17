@@ -1,5 +1,6 @@
 from kivy.uix.screenmanager import Screen
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.button import Button
 from kivymd.uix.menu import MDDropdownMenu
@@ -11,47 +12,66 @@ import requests
 
 class TracksScreen(Screen):
     def __init__(self, **kwargs):
-        self.circuit_menu = MDDropdownMenu()
-        self.year_menu = MDDropdownMenu()
-
         super(TracksScreen, self).__init__(**kwargs)
 
         # Create the layout
         layout = BoxLayout(orientation='vertical', spacing=10, padding=10)
+        #layout = GridLayout(cols=2)
 
-        # Create labels with black text color
+        # Labels
         label_circuit = Label(text="Select Circuit:", color=(0, 0, 0, 1))
         label_year = Label(text="Select Year:", color=(0, 0, 0, 1))
 
-        # Create buttons for dropdowns with black text color
+        #Buttons
         self.circuit_button = MDFlatButton(
             text="Select Circuit",
+            size_hint=(None, None),
             on_release=lambda instance: self.open_circuit_menu(instance),
             theme_text_color='Custom',
-            text_color=(0, 0, 0, 1))
-        self.year_button = MDFlatButton(text="Select Year", on_release=self.open_year_menu, theme_text_color='Custom', text_color=(0, 0, 0, 1))
+            text_color=(1, 1, 1, 1),
+            md_bg_color=(33 / 255, 89 / 255, 116 / 255, 1))
+        
+        self.year_button = MDFlatButton(
+            text="Select Year",
+            on_release=self.open_year_menu,
+            theme_text_color='Custom',
+            text_color=(1, 1, 1, 1),
+            md_bg_color=(33 / 255, 89 / 255, 116 / 255, 1))
+        
+        api_button = MDFlatButton(
+            text="Get Data",
+            theme_text_color="Custom",
+            text_color=(1, 1, 1, 1),
+            md_bg_color=(33 / 255, 89 / 255, 116 / 255, 1),
+            on_press=self.on_api_button_press)
 
-
+        # Initialize dropdown menus
+        self.circuit_menu = MDDropdownMenu(
+            radius=[24, 0, 24, 0],
+            width_mult=4
+            )
+        
+        self.year_menu = MDDropdownMenu(
+            radius=[24, 0, 24, 0],
+            width_mult=4
+            )
 
         # Add items to dropdowns (you need to fetch the available circuits and years from the Ergast API)
         self.populate_circuits()
         self.populate_years()
 
         # Create button to trigger API request
-        api_button = Button(text="Get Data", on_press=self.on_api_button_press)
+        
 
         # Add widgets to the layout
         layout.add_widget(label_circuit)
         layout.add_widget(self.circuit_button)
+
         layout.add_widget(label_year)
         layout.add_widget(self.year_button)
+
         layout.add_widget(api_button)
-
         self.add_widget(layout)
-
-        # Initialize dropdown menus
-        #self.circuit_menu = MDDropdownMenu()
-        #self.year_menu = MDDropdownMenu()
 
     def open_circuit_menu(self, instance):
         self.circuit_menu.caller = instance
@@ -61,14 +81,15 @@ class TracksScreen(Screen):
         self.year_menu.caller = instance
         self.year_menu.open()
 
-   # Modify the populate_circuits method
+
+    # Modify the populate_circuits method
     def populate_circuits(self):
-        response = requests.get('http://ergast.com/api/f1/circuits.json')
+        response = requests.get('http://ergast.com/api/f1/2023/circuits.json')
         circuits = response.json().get('MRData', {}).get('CircuitTable', {}).get('Circuits', [])
 
         # Add items to the dropdown
         for circuit in circuits:
-            item = {'text': circuit['circuitName'], 'viewclass': 'OneLineListItem', 'on_release': lambda instance_menu_item, circuit=circuit['circuitName']: self.select_circuit(instance_menu_item, circuit)}
+            item = {'text': circuit['circuitName'], 'viewclass': 'OneLineListItem', 'on_release': lambda circuit=circuit['circuitName']: self.select_circuit(circuit)}
             self.circuit_menu.items.append(item)
 
 
@@ -82,7 +103,7 @@ class TracksScreen(Screen):
             self.year_menu.items.append(item)
 
 
-    def select_circuit(self, instance_menu_item, circuit):
+    def select_circuit(self, circuit):
         # Handle circuit selection
         print("Selected Circuit:", circuit)
         self.circuit_menu.dismiss()
@@ -117,8 +138,3 @@ class TracksScreen(Screen):
         # Display a dialog with the API results (customize based on your API response)
         results_dialog = MDDialog(title="API Results", text="Dummy API Results")
         results_dialog.open()
-
-
-#class Tracks(MDApp):
-    #def build(self):
-        #return TracksScreen()
