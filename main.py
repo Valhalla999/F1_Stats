@@ -11,7 +11,7 @@ from my_app.views.kivymd_page import KivyMDPage
 class MyApp(MDApp):
     def build(self):
         self.screen_manager = ScreenManager()
-        self.set_window_size(1024, 768)
+        self.set_window_size()
 
         # Create and add screens
         self.main_screen = MainScreen(name="main")
@@ -28,8 +28,9 @@ class MyApp(MDApp):
 
         return self.screen_manager
     
-    def set_window_size(self, width, height):
-        Window.size = (width, height)
+    def set_window_size(self):
+        #Window.size = (width, height)
+        Window.fullscreen = 'auto'
 
 
 if __name__ == "__main__":

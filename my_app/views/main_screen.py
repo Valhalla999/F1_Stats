@@ -11,7 +11,9 @@ class MainScreen(Screen):
         self.size_hint = (0.9, 0.9)
         self.pos_hint = {'center_x': 0.5, 'center_y': 0.5}
         
-        layout = BoxLayout(orientation='vertical', spacing=10)
+        layout = BoxLayout(
+            orientation='vertical',
+            spacing=10)
 
 
         layout.add_widget(Image(source="my_app/assets/Tech-Play-logo_black.png"))
@@ -36,21 +38,21 @@ class MainScreen(Screen):
 
         btn2 = MDFillRoundFlatButton(
             text="Championship Standings", 
-            size_hint=(1, 1), 
+            size_hint=(0.1, 0.1), 
             theme_text_color="Custom",
             md_bg_color=(33/255, 89/255, 116/255, 1),
             on_press=self.switch_to_champion_standings)
         
         btn3 = MDFillRoundFlatButton(
             text="Tracks", 
-            size_hint=(1, 1), 
+            size_hint=(0.1, 0.1), 
             theme_text_color="Custom",
             md_bg_color=(33/255, 89/255, 116/255, 1),
             on_press=self.switch_to_tracks)
         
         btn4 = MDFillRoundFlatButton(
             text="Test Screen", 
-            size_hint=(1, 1), 
+            size_hint=(0.1, 0.1), 
             theme_text_color="Custom",
             md_bg_color=(33/255, 89/255, 116/255, 1),
             on_press=self.switch_to_test)
