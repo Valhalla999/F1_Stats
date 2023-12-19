@@ -3,6 +3,7 @@ from kivy.uix.scrollview import ScrollView
 from kivy.uix.gridlayout import GridLayout
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.list import OneLineListItem
+from kivy.uix.boxlayout import BoxLayout
 from kivymd.uix.button import MDFillRoundFlatButton
 
 import requests
@@ -12,42 +13,85 @@ class DriverOverviewScreen(Screen):
     def __init__(self, **kwargs):
         super(DriverOverviewScreen, self).__init__(**kwargs)
 
-        layout = GridLayout(cols=1, spacing=1, size_hint_y=None)
+        '''layout = GridLayout(
+            cols=1,
+            spacing=10,
+            padding=10,
+            size_hint_y=None)'''
+        
+        layout = BoxLayout(
+            orientation="vertical",
+            spacing=10,
+            padding=10,
+        )
         layout.bind(minimum_height=layout.setter("height"))
 
-        # Header Layout
+        # Adding Header
         header_layout = MDBoxLayout(
-            orientation="horizontal", adaptive_height=True, spacing=10
+            orientation="horizontal",
+            adaptive_height=True,
+            spacing=10,
+            padding=10,
         )
         header_layout.add_widget(
-            OneLineListItem(text="Permanent Number", size_hint_x=0.2)
+            OneLineListItem(
+                text="Permanent Number",
+                size_hint_x=0.2)
         )
-        header_layout.add_widget(OneLineListItem(text="Driver", size_hint_x=0.4))
-        header_layout.add_widget(OneLineListItem(text="Nationality", size_hint_x=0.2))
-        header_layout.add_widget(OneLineListItem(text="Date of Birth", size_hint_x=0.2))
+        header_layout.add_widget(
+            OneLineListItem(
+                text="Driver",
+                size_hint_x=0.4)
+                )
+        
+        header_layout.add_widget(
+            OneLineListItem(
+                text="Nationality",
+                size_hint_x=0.2)
+                )
+        
+        header_layout.add_widget(
+            OneLineListItem(
+                text="Date of Birth",
+                size_hint_x=0.2)
+                )
 
         layout.add_widget(header_layout)
 
-        # Driver Data
+
+        # Adding Rows
         drivers_data = self.get_current_f1_drivers()
-        for driver in drivers_data:
+        sorted_drivers = sorted(drivers_data, key=lambda x: int(x["permanentNumber"]) )
+
+        for driver in sorted_drivers:
             row_layout = MDBoxLayout(
-                orientation="horizontal", adaptive_height=True, spacing=10
+                orientation="horizontal",
+                adaptive_height=True,
+                spacing=10
             )
+
             row_layout.add_widget(
-                OneLineListItem(text=driver["permanentNumber"], size_hint_x=0.2)
+                OneLineListItem(
+                    text=driver["permanentNumber"],
+                    size_hint_x=0.2)
             )
+
             row_layout.add_widget(
                 OneLineListItem(
                     text=f"{driver['givenName']} {driver['familyName']}",
-                    size_hint_x=0.4,
-                )
+                    size_hint_x=0.4)
             )
+
             row_layout.add_widget(
-                OneLineListItem(text=driver["nationality"], size_hint_x=0.2)
+                OneLineListItem(
+                    text=driver["nationality"],
+                    size_hint_x=0.2)
             )
+
             row_layout.add_widget(
-                OneLineListItem(text=driver["dateOfBirth"], size_hint_x=0.2)
+                OneLineListItem(
+                    text=driver["dateOfBirth"],
+                    size_hint_x=0.2)
             )
 
             layout.add_widget(row_layout)
@@ -55,15 +99,18 @@ class DriverOverviewScreen(Screen):
         # Add Back button
         back_button = MDFillRoundFlatButton(
             text="Back to Main",
-            size_hint=(None, None),
-            size=(200, 50),
+            size_hint=(0.15, 0.15),
+            pos_hint={"center_x": 0.5,},
             theme_text_color="Custom",
             text_color=(1, 1, 1, 1),
-            md_bg_color=(33 / 255, 89 / 255, 116 / 255, 1),  # Change background color
+            md_bg_color=(33 / 255, 89 / 255, 116 / 255, 1),
             on_press=self.switch_to_main,
         )
 
-        root = ScrollView(size_hint=(1, 1))
+        root = ScrollView(
+            size_hint=(1, 1)
+            )
+        
         root.pos_hint = {"center_x": 0.5, "center_y": 0.5}
 
         layout.add_widget(back_button)
@@ -72,6 +119,8 @@ class DriverOverviewScreen(Screen):
 
     def switch_to_main(self, instance):
         self.manager.current = "main"
+
+
 
     def get_current_f1_drivers(self):
         # Request to Ergast API
