@@ -1,6 +1,5 @@
 from kivy.uix.screenmanager import Screen
 from kivy.uix.scrollview import ScrollView
-from kivy.uix.gridlayout import GridLayout
 from kivymd.uix.boxlayout import MDBoxLayout
 from kivymd.uix.list import OneLineListItem
 from kivy.uix.boxlayout import BoxLayout
