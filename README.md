@@ -1,5 +1,4 @@
 # F1 Stats
-#### Video Demo:  <URL https://youtu.be/dl8w-OQIhxg>
 #### Description:
 Introduction to my F1 tracker, a sleek and powerful tool I've built using Python with the Kivy framework and integrated with the Ergast API
 This application is using the Kivy framework, a powerful Python library.
