@@ -32,8 +32,8 @@ class AboutMeScreen(Screen):
 
         phrase_label = MDLabel(
             text=(
-                "“Sometimes when you innovate, you make mistakes. "
-                "It is best to admit them quickly and get on with improving your other innovations.”"
+                '"Sometimes when you innovate, you make mistakes. '
+                'It is best to admit them quickly and get on with improving your other innovations."'
                 "\n"
                 "\n - Steve Jobs"
             ),
@@ -52,7 +52,7 @@ class AboutMeScreen(Screen):
             on_press=self.open_twitter,
         )
 
-        btn_linkedIn = MDIconButton(
+        btn_linkedin = MDIconButton(
             icon="linkedin",
             icon_size=dp(100),
             size_hint=(0.5, 0.5),
@@ -79,7 +79,7 @@ class AboutMeScreen(Screen):
         top_row.add_widget(phrase_label)
 
         social_buttons.add_widget(btn_twitter)
-        social_buttons.add_widget(btn_linkedIn)
+        social_buttons.add_widget(btn_linkedin)
 
         main_layout.add_widget(top_row)
         main_layout.add_widget(social_buttons)

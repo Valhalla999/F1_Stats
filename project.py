@@ -60,14 +60,6 @@ class MainScreen(Screen):
             md_bg_color=(33 / 255, 89 / 255, 116 / 255, 1),
             on_press=self.switch_to_about_me,
         )
-        """
-        btn5 = MDFillRoundFlatButton(
-            text="Test Screen", 
-            size_hint=(0.15, 0.15), 
-            pos_hint={'center_x': 0.5}, 
-            theme_text_color="Custom",
-            md_bg_color=(33/255, 89/255, 116/255, 1),
-            on_press=self.switch_to_test)"""
 
         layout.add_widget(greeting)
 
@@ -75,7 +67,6 @@ class MainScreen(Screen):
         layout.add_widget(btn_champion)
         layout.add_widget(btn_history)
         layout.add_widget(btn_about)
-        # layout.add_widget(btn4)
 
         self.add_widget(layout)
 
@@ -90,7 +81,3 @@ class MainScreen(Screen):
 
     def switch_to_about_me(self, instance):
         self.manager.current = "about_me"
-
-    def switch_to_test(self, instance):
-        self.manager.current = "kivymd_page"
-        print("switched to test screen")

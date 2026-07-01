@@ -5,19 +5,20 @@ from kivymd.uix.list import OneLineListItem
 from kivy.uix.boxlayout import BoxLayout
 from kivymd.uix.button import MDFillRoundFlatButton
 
-import requests
+from my_app.api import get_current_drivers
+
+
+def driver_number(driver):
+    try:
+        return int(driver.get("permanentNumber", 0))
+    except (TypeError, ValueError):
+        return 0
 
 
 class DriverOverviewScreen(Screen):
     def __init__(self, **kwargs):
         super(DriverOverviewScreen, self).__init__(**kwargs)
 
-        '''layout = GridLayout(
-            cols=1,
-            spacing=10,
-            padding=10,
-            size_hint_y=None)'''
-        
         layout = BoxLayout(
             orientation="vertical",
             spacing=10,
@@ -59,8 +60,11 @@ class DriverOverviewScreen(Screen):
 
 
         # Adding Rows
-        drivers_data = self.get_current_f1_drivers()
-        sorted_drivers = sorted(drivers_data, key=lambda x: int(x["permanentNumber"]) )
+        drivers_data = get_current_drivers()
+        sorted_drivers = sorted(
+            drivers_data,
+            key=driver_number,
+        )
 
         for driver in sorted_drivers:
             row_layout = MDBoxLayout(
@@ -71,25 +75,25 @@ class DriverOverviewScreen(Screen):
 
             row_layout.add_widget(
                 OneLineListItem(
-                    text=driver["permanentNumber"],
+                    text=driver.get("permanentNumber", ""),
                     size_hint_x=0.2)
             )
 
             row_layout.add_widget(
                 OneLineListItem(
-                    text=f"{driver['givenName']} {driver['familyName']}",
+                    text=f"{driver.get('givenName', '')} {driver.get('familyName', '')}",
                     size_hint_x=0.4)
             )
 
             row_layout.add_widget(
                 OneLineListItem(
-                    text=driver["nationality"],
+                    text=driver.get("nationality", ""),
                     size_hint_x=0.2)
             )
 
             row_layout.add_widget(
                 OneLineListItem(
-                    text=driver["dateOfBirth"],
+                    text=driver.get("dateOfBirth", ""),
                     size_hint_x=0.2)
             )
 
@@ -118,17 +122,3 @@ class DriverOverviewScreen(Screen):
 
     def switch_to_main(self, instance):
         self.manager.current = "main"
-
-
-
-    def get_current_f1_drivers(self):
-        # Request to Ergast API
-        api_url = "https://ergast.com/api/f1/current/drivers.json"
-        response = requests.get(api_url)
-
-        if response.status_code == 200:
-            data = response.json()
-            return data["MRData"]["DriverTable"]["Drivers"]
-        else:
-            print(f"Error fetching data: {response.status_code}")
-            return []

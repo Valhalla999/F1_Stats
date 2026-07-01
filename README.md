@@ -1,59 +1,61 @@
 # F1 Stats
-#### Description:
-Introduction to my F1 tracker, a sleek and powerful tool I've built using Python with the Kivy framework and integrated with the Ergast API
-This application is using the Kivy framework, a powerful Python library.
-It provides a beautiful and responsive user interface, making it perfect for F1 tracker."
-With my F1 tracker, you can stay up-to-date with the latest Formula 1 information.
-Whether you're a die-hard fan or just curious about the sport, this app has you covered.
-Driver Overview:
-Actual Driver with the Points. 
-Historical Data:
-History of Formula 1. Explore past seasons review race results.
-So there you have it! My F1 tracker, a passion project that combines the power of Python, Kivy, and the Ergast API to bring you the ultimate Formula 1 experience. Download the app today and immerse yourself in the thrilling world of Formula 1.
-Happy racing!
 
-# Function
+F1 Stats is a small desktop app for browsing Formula 1 driver data, standings, and historical race results. It was built with Python, Kivy, and KivyMD as a CS50 project and now uses the Ergast-compatible Jolpica F1 API.
 
-### To run the Program make sure Kivy is installed.
-### Run with python main.py
+Video demo: https://youtu.be/dl8w-OQIhxg
 
-The Program is written in Python and using the Kivy Framework.
-For the F1 data the Ergast API is used.
-This is a free to use API for non commercial use.
+## Features
 
-For the correct function of the Program a Internet connection is needed. 
-The Data are fetch every time the app is opened.
+- Current driver overview with driver number, name, nationality, and date of birth
+- Current driver championship standings
+- Historical race lookup by season and circuit
+- Simple About page with social links
 
-The goal was also to keep the app as sleek as possible and only get the most important data as possible
+## Requirements
 
+- Python 3.10 or newer
+- Internet access for live Formula 1 data
+- Python dependencies listed in `requirements.txt`
 
-# Example of the differents Screens
+## Setup
 
-### Main Screen
-Main Screen contains 5 buttons:
-Driver Screen, Champion Standing Screen, History and about me.
-These are more explained in detail below.
-On the Top is my Company Logo. Tech&Play
+Create and activate a virtual environment:
 
-### Driver Screen
-Actual Overview of all current drivers with Name,Nationality and Birthday
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+```
 
-### Champion Screen
-Current Championship standing with all the drivers and the current place
+Install dependencies:
 
-### History:
-Selection of Past races in the past years.
-First Select the Year and then the race for lookup.
-The result will be show in a Dialog Window
+```bash
+pip install -r requirements.txt
+```
 
-### About me Page
-This contains one of my favorite phrases.
-Two buttons what are linked to my Twitter and LinkedIn.
+Run the app:
 
-# What comes next
+```bash
+python main.py
+```
 
-All this Project was Part of Harvards and Edx CS50P and CS50 course.
-After publishing this Projecte the Project will not stop.
-The Goal for Q1 2024 is to add more data and get the app more interactive.
-If possible also live data will be connected.
-Any more wishes i am happy for more feedback or if some furhter featured are requested.
+## Tests
+
+Run the test suite with:
+
+```bash
+pytest
+```
+
+The tests mock live API calls so the basic app wiring can be checked without depending on the network.
+
+## Project Structure
+
+- `main.py` starts the KivyMD app and registers the screens.
+- `project.py` contains the main menu screen.
+- `my_app/api.py` contains the F1 API access helpers.
+- `my_app/views/` contains the individual app screens.
+- `test_project.py` contains smoke tests for the app setup and navigation.
+
+## Notes
+
+The app reads Formula 1 data from `https://api.jolpi.ca/ergast/f1`, which provides an Ergast-compatible API. Network requests use a timeout and return empty results on API errors so the UI can still load when the service is unavailable.

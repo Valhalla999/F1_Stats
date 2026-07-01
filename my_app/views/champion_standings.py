@@ -4,7 +4,8 @@ from kivymd.uix.button import MDFillRoundFlatButton
 from kivy.uix.screenmanager import Screen
 from kivymd.uix.list import OneLineListItem
 from kivy.uix.boxlayout import BoxLayout
-import requests
+
+from my_app.api import get_driver_standings
 
 
 class ChampionStandingsScreen(Screen):
@@ -29,7 +30,7 @@ class ChampionStandingsScreen(Screen):
         layout.add_widget(standings_header)
 
         # Adding Data
-        standings_data = self.get_driver_standings()
+        standings_data = get_driver_standings()
 
         for standing in standings_data:
             standing_layout = MDBoxLayout(
@@ -37,18 +38,19 @@ class ChampionStandingsScreen(Screen):
             )
 
             standing_layout.add_widget(
-                OneLineListItem(text=standing["position"], size_hint_x=0.25)
+                OneLineListItem(text=standing.get("position", ""), size_hint_x=0.25)
             )
 
+            driver = standing.get("Driver", {})
             standing_layout.add_widget(
                 OneLineListItem(
-                    text=f"{standing['Driver']['givenName']} {standing['Driver']['familyName']}",
+                    text=f"{driver.get('givenName', '')} {driver.get('familyName', '')}",
                     size_hint_x=0.45,
                 )
             )
 
             standing_layout.add_widget(
-                OneLineListItem(text=standing["points"], size_hint_x=0.25)
+                OneLineListItem(text=standing.get("points", ""), size_hint_x=0.25)
             )
 
             layout.add_widget(standing_layout)
@@ -72,16 +74,3 @@ class ChampionStandingsScreen(Screen):
 
     def switch_to_main(self, instance):
         self.manager.current = "main"
-
-    def get_driver_standings(self):
-        api_url = "https://ergast.com/api/f1/current/driverStandings.json"
-        response = requests.get(api_url)
-
-        if response.status_code == 200:
-            data = response.json()
-            return data["MRData"]["StandingsTable"]["StandingsLists"][0][
-                "DriverStandings"
-            ]
-        else:
-            print(f"Error fetching data: {response.status_code}")
-            return []
